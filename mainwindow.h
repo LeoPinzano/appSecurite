@@ -18,9 +18,9 @@ public:
     ~MainWindow();
 
 private slots:
-    void generateKey();
-    void encryptFile();
-    void decryptFile();
+    void generateRSA();
+    void encryptRSA();
+    void decryptRSA();
 
 private:
     Ui::MainWindow *ui;

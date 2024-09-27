@@ -22,3 +22,19 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+win32: LIBS += -L$$PWD/../../Seq1_Act05_chiffrementCpp/CryptoCiel/x64/Release/ -lcryptoCielTest
+
+INCLUDEPATH += $$PWD/../../Seq1_Act05_chiffrementCpp/CryptoCiel
+DEPENDPATH += $$PWD/../../Seq1_Act05_chiffrementCpp/CryptoCiel
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../Seq1_Act05_chiffrementCpp/CryptoCiel/x64/Release/cryptoCielTest.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../../Seq1_Act05_chiffrementCpp/CryptoCiel/x64/Release/libcryptoCielTest.a
+
+win32: LIBS += -L$$PWD/../../Seq1_Act05_chiffrementCpp/cryptopp/x64/Output/Release/ -lcryptlib
+
+INCLUDEPATH += $$PWD/../../Seq1_Act05_chiffrementCpp/cryptopp
+DEPENDPATH += $$PWD/../../Seq1_Act05_chiffrementCpp/cryptopp
+
+win32:!win32-g++: PRE_TARGETDEPS += $$PWD/../../Seq1_Act05_chiffrementCpp/cryptopp/x64/Output/Release/cryptlib.lib
+else:win32-g++: PRE_TARGETDEPS += $$PWD/../../Seq1_Act05_chiffrementCpp/cryptopp/x64/Output/Release/libcryptlib.a
