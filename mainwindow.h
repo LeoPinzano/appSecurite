@@ -17,6 +17,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void generateKey();
+    void encryptFile();
+    void decryptFile();
+
 private:
     Ui::MainWindow *ui;
 };
