@@ -168,48 +168,61 @@ void MainWindow::calcFileSha()
 
 void MainWindow::generateAES()
 {
-    QString directory = QFileDialog::getExistingDirectory(this, tr("Selectionnez le répértoire"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    if (!directory.isEmpty()) {
-        QString keyFile = directory + "/aes_key.key";
-
-        AesGestion aesGestion;
-        aesGestion.GenerateAESKey();
-        aesGestion.SaveAESKeyToFile(keyFile.toStdString());
-
-        QMessageBox::information(this, tr("AES Key Generated"), tr("La clé AES à été enregistré dans le répértoir choisis."));
+    QDir dir;
+    if (!dir.exists("keys")) {
+        dir.mkpath("keys");
     }
+
+    QString keyFile = "keys/aes_key.key";
+
+    aesGestion.GenerateAESKey();
+    aesGestion.SaveAESKeyToFile(keyFile.toStdString());
+
+    QMessageBox::information(this, tr("AES Key Generated"), tr("AES key has been saved in the 'keys' directory.:\n") + keyFile);
 }
 
 void MainWindow::encryptAES()
 {
-    QString keyFile = QFileDialog::getOpenFileName(this, tr("Ouverture clé AES"), "", tr("Key Files (*.key);;All Files (*)"));
-    if (!keyFile.isEmpty()) {
-        QString fileToEncrypt = QFileDialog::getOpenFileName(this, tr("Selectionnez le fichier à chiffrer"), "", tr("All Files (*)"));
-        if (!fileToEncrypt.isEmpty()) {
-            QString encryptedFile = QFileDialog::getSaveFileName(this, tr("Sauvegarde du fichier chiffré"), "", tr("Encrypted Files (*.enc);;All Files (*)"));
-            if (!encryptedFile.isEmpty()) {
-                AesGestion aesGestion;
-                aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
-                aesGestion.EncryptFileAES256(fileToEncrypt.toStdString(), encryptedFile.toStdString());
-                QMessageBox::information(this, tr("File Encrypted"), tr("Fichier chiffré sauvegarder vers:\n") + encryptedFile);
-            }
-        }
+    QDir dir;
+    if (!dir.exists("keys")) {
+        dir.mkpath("keys");
+    }
+    if (!dir.exists("encrypted")) {
+        dir.mkpath("encrypted");
+    }
+
+    QString keyFile = QDir::currentPath() + ".\\..\\..\\keys\\aes_key.key";
+    QString fileToEncrypt = QFileDialog::getOpenFileName(this, tr("Select File to Encrypt"), "", tr("All Files (*)"));
+    if (!fileToEncrypt.isEmpty()) {
+        QString encryptedFile = QDir::currentPath() + "/encrypted/" + QFileInfo(fileToEncrypt).fileName() + ".enc";
+
+        AesGestion aesGestion;
+        aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
+        aesGestion.EncryptFileAES256(fileToEncrypt.toStdString(), encryptedFile.toStdString());
+
+        QMessageBox::information(this, tr("File Encrypted"), tr("Encrypted file saved in the 'encrypted' directory:\n") + encryptedFile);
     }
 }
 
 void MainWindow::decryptAES()
 {
-    QString keyFile = QFileDialog::getOpenFileName(this, tr("Ouverture clé AES"), "", tr("Key Files (*.key);;All Files (*)"));
-    if (!keyFile.isEmpty()) {
-        QString encryptedFile = QFileDialog::getOpenFileName(this, tr("Ouverture fichier chiffré"), "", tr("Encrypted Files (*.enc);;All Files (*)"));
-        if (!encryptedFile.isEmpty()) {
-            QString decryptedFile = QFileDialog::getSaveFileName(this, tr("Sauvegarde du fichier déchiffré"), "", tr("Decrypted Files (*.*);;All Files (*)"));
-            if (!decryptedFile.isEmpty()) {
-                AesGestion aesGestion;
-                aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
-                aesGestion.DecryptFileAES256(encryptedFile.toStdString(), decryptedFile.toStdString());
-                QMessageBox::information(this, tr("File Decrypted"), tr("Fichier déchiffré enregistré vers:\n") + decryptedFile);
-            }
-        }
+    QDir dir;
+    if (!dir.exists("keys")) {
+        dir.mkpath("keys");
+    }
+    if (!dir.exists("decrypted")) {
+        dir.mkpath("decrypted");
+    }
+
+    QString keyFile = QDir::currentPath() + "keys/aes_key.key";
+    QString encryptedFile = QFileDialog::getOpenFileName(this, tr("Open Encrypted File"), "", tr("Encrypted Files (*.enc);;All Files (*)"));
+    if (!encryptedFile.isEmpty()) {
+        QString decryptedFile = QDir::currentPath() + "/decrypted/" + QFileInfo(encryptedFile).completeBaseName();
+
+        AesGestion aesGestion;
+        aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
+        aesGestion.DecryptFileAES256(encryptedFile.toStdString(), decryptedFile.toStdString());
+
+        QMessageBox::information(this, tr("File Decrypted"), tr("Decrypted file saved in the 'decrypted' directory:\n") + decryptedFile);
     }
 }
