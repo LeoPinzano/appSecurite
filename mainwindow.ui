@@ -103,7 +103,7 @@
       </layout>
      </widget>
     </widget>
-    <widget class="QWidget" name="page">
+    <widget class="QWidget" name="ShaPage">
      <widget class="QWidget" name="verticalLayoutWidget_2">
       <property name="geometry">
        <rect>
@@ -115,26 +115,19 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QPushButton" name="RSAKeyBtn_2">
+        <widget class="QPushButton" name="ShaCalcBtn">
          <property name="enabled">
           <bool>true</bool>
          </property>
          <property name="text">
-          <string>Générer une paire de clés</string>
+          <string>Obtenir le hash (sha256) d'une chaine de caractère (dans un fichier)</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="RSAencryptBtn_2">
+        <widget class="QPushButton" name="ShaCalcFileBtn">
          <property name="text">
-          <string>Chiffrer un fichier</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="RSAdecryptBtn_2">
-         <property name="text">
-          <string>Déchiffrer un fichier</string>
+          <string>Obtenir le hash Sha256 d'un fichier</string>
          </property>
         </widget>
        </item>

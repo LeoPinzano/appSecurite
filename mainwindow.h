@@ -21,6 +21,8 @@ private slots:
     void generateRSA();
     void encryptRSA();
     void decryptRSA();
+    void calcSha();
+    void calcFileSha();
 
 private:
     Ui::MainWindow *ui;

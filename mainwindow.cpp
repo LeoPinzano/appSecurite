@@ -5,8 +5,10 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <RsaGestion.h>
+#include <HashGestion.h>
 
 RsaGestion rsaGestion;
+HashGestion hashGestion;
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -19,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->RSAKeyBtn, &QPushButton::clicked, this, &MainWindow::generateRSA);
     connect(ui->RSAencryptBtn, &QPushButton::clicked, this, &MainWindow::encryptRSA);
     connect(ui->RSAdecryptBtn, &QPushButton::clicked, this, &MainWindow::decryptRSA);
+    connect(ui->ShaCalcBtn, &QPushButton::clicked, this, &MainWindow::calcSha);
+    connect(ui->ShaCalcFileBtn, &QPushButton::clicked, this, &MainWindow::calcFileSha);
 }
 
 MainWindow::~MainWindow()
@@ -84,7 +88,6 @@ void MainWindow::encryptRSA()
     }
 }
 
-
 void MainWindow::decryptRSA()
 {
     QString encryptedFile = QFileDialog::getOpenFileName(this, tr("Ouvrir fichier chiffré"), "", tr("Encrypted Files (*.crypt);;All Files (*)"));
@@ -97,6 +100,41 @@ void MainWindow::decryptRSA()
                 rsaGestion.dechiffrementFichier(encryptedFile.toStdString(), decryptedFile.toStdString(), true);
                 QMessageBox::information(this, tr("Fichier déchiffré"), tr("Fichier déchiffré enregistré vers:\n") + decryptedFile);
             }
+        }
+    }
+}
+
+
+void MainWindow::calcSha()
+{
+    QString fileToHash = QFileDialog::getOpenFileName(this, tr("Select File to Hash"), "", tr("All Files (*)"));
+    if (!fileToHash.isEmpty()) {
+        QFile file(fileToHash);
+        if (file.open(QIODevice::ReadOnly)) {
+            QByteArray fileData = file.readAll();
+            file.close();
+
+            HashGestion hashGestion;
+            std::string hashResult = hashGestion.CalculateSHA256(fileData.toStdString());
+
+            QMessageBox::information(this, tr("SHA-256 Hash"), tr("The SHA-256 hash of the file is:\n") + QString::fromStdString(hashResult));
+        } else {
+            QMessageBox::warning(this, tr("Error"), tr("Unable to open the file."));
+        }
+    }
+}
+
+void MainWindow::calcFileSha()
+{
+    QString fileToHash = QFileDialog::getOpenFileName(this, tr("Select File to Hash"), "", tr("All Files (*)"));
+    if (!fileToHash.isEmpty()) {
+        HashGestion hashGestion;
+        std::string hashResult = hashGestion.CalculateFileSHA256(fileToHash.toStdString());
+
+        if (!hashResult.empty()) {
+            QMessageBox::information(this, tr("SHA-256 Hash"), tr("The SHA-256 hash of the file is:\n") + QString::fromStdString(hashResult));
+        } else {
+            QMessageBox::warning(this, tr("Error"), tr("Unable to calculate the hash of the file."));
         }
     }
 }
