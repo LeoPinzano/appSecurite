@@ -21,6 +21,10 @@ private slots:
     void generateRSA();
     void encryptRSA();
     void decryptRSA();
+    void generateAES();
+    void encryptAES();
+    void decryptAES();
+    void loadAESkey();
 
 private:
     Ui::MainWindow *ui;

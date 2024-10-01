@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 14.0.1, 2024-09-27T12:28:07. -->
+<!-- Written by QtCreator 14.0.1, 2024-10-01T14:18:38. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
-  <value type="QByteArray">{faceca21-39bb-4aa6-bf20-de45dd4df27c}</value>
+  <value type="QByteArray">{aae7522a-0642-41a2-82e2-34343e6df9df}</value>
  </data>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -93,14 +93,14 @@
    <value type="QString" key="DeviceType">Desktop</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Bureau (x86-windows-msvc2022-pe-64bit)</value>
    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">Bureau (x86-windows-msvc2022-pe-64bit)</value>
-   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{c3d3598f-621c-4813-9680-e5d98c1a1a0a}</value>
+   <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">{7cb457f7-678d-47ff-a564-8dcedb956089}</value>
    <value type="qlonglong" key="ProjectExplorer.Target.ActiveBuildConfiguration">1</value>
    <value type="qlonglong" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
    <value type="qlonglong" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
     <value type="int" key="EnableQmlDebugging">0</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\CIEL23_admin\Documents\Projet\Seq2_Act00\appSecurite\build\Bureau_x86_windows_msvc2022_pe_64bit-Debug</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">C:/Users/CIEL23_admin/Documents/Projet/Seq2_Act00/appSecurite/build/Bureau_x86_windows_msvc2022_pe_64bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\CIEL23_admin\Desktop\CoursCiel2\seq01-compilation_cpp\act05-chiffrementCpp\QtChiffrement\appSecurite\build\Bureau_x86_windows_msvc2022_pe_64bit-Debug</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">C:/Users/CIEL23_admin/Desktop/CoursCiel2/seq01-compilation_cpp/act05-chiffrementCpp/QtChiffrement/appSecurite/build/Bureau_x86_windows_msvc2022_pe_64bit-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -138,8 +138,8 @@
     <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">2</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\CIEL23_admin\Documents\Projet\Seq2_Act00\appSecurite\build\Bureau_x86_windows_msvc2022_pe_64bit-Release</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">C:/Users/CIEL23_admin/Documents/Projet/Seq2_Act00/appSecurite/build/Bureau_x86_windows_msvc2022_pe_64bit-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\CIEL23_admin\Desktop\CoursCiel2\seq01-compilation_cpp\act05-chiffrementCpp\QtChiffrement\appSecurite\build\Bureau_x86_windows_msvc2022_pe_64bit-Release</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">C:/Users/CIEL23_admin/Desktop/CoursCiel2/seq01-compilation_cpp/act05-chiffrementCpp/QtChiffrement/appSecurite/build/Bureau_x86_windows_msvc2022_pe_64bit-Release</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -179,8 +179,8 @@
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.2">
     <value type="int" key="EnableQmlDebugging">0</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\CIEL23_admin\Documents\Projet\Seq2_Act00\appSecurite\build\Bureau_x86_windows_msvc2022_pe_64bit-Profile</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">C:/Users/CIEL23_admin/Documents/Projet/Seq2_Act00/appSecurite/build/Bureau_x86_windows_msvc2022_pe_64bit-Profile</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\CIEL23_admin\Desktop\CoursCiel2\seq01-compilation_cpp\act05-chiffrementCpp\QtChiffrement\appSecurite\build\Bureau_x86_windows_msvc2022_pe_64bit-Profile</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">C:/Users/CIEL23_admin/Desktop/CoursCiel2/seq01-compilation_cpp/act05-chiffrementCpp/QtChiffrement/appSecurite/build/Bureau_x86_windows_msvc2022_pe_64bit-Profile</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
@@ -244,13 +244,13 @@
     <value type="bool" key="PE.EnvironmentAspect.PrintOnRun">false</value>
     <value type="QString" key="PerfRecordArgsId">-e cpu-cycles --call-graph &quot;dwarf,4096&quot; -F 250</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:C:/Users/CIEL23_admin/Documents/Projet/Seq2_Act00/appSecurite/appSecurite.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/CIEL23_admin/Documents/Projet/Seq2_Act00/appSecurite/appSecurite.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:C:/Users/CIEL23_admin/Desktop/CoursCiel2/seq01-compilation_cpp/act05-chiffrementCpp/QtChiffrement/appSecurite/appSecurite.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/CIEL23_admin/Desktop/CoursCiel2/seq01-compilation_cpp/act05-chiffrementCpp/QtChiffrement/appSecurite/appSecurite.pro</value>
     <value type="bool" key="ProjectExplorer.RunConfiguration.Customized">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Users/CIEL23_admin/Documents/Projet/Seq2_Act00/appSecurite/build/Bureau_x86_windows_msvc2022_pe_64bit-Release</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Users/CIEL23_admin/Desktop/CoursCiel2/seq01-compilation_cpp/act05-chiffrementCpp/QtChiffrement/appSecurite/build/Bureau_x86_windows_msvc2022_pe_64bit-Release</value>
    </valuemap>
    <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

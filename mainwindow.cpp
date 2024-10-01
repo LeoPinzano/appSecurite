@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <RsaGestion.h>
+#include <AesGestion.h>
 
 RsaGestion rsaGestion;
 
@@ -18,6 +19,9 @@ MainWindow::MainWindow(QWidget *parent)
     // Connect buttons to their respective slots
     connect(ui->RSAKeyBtn, &QPushButton::clicked, this, &MainWindow::generateRSA);
     connect(ui->RSAencryptBtn, &QPushButton::clicked, this, &MainWindow::encryptRSA);
+    connect(ui->RSAdecryptBtn, &QPushButton::clicked, this, &MainWindow::decryptRSA);
+    connect(ui->AESbtn, &QPushButton::clicked, this, &MainWindow::generateAES);
+    connect(ui->AESencryptBtn, &QPushButton::clicked, this, &MainWindow::encryptRSA);
     connect(ui->RSAdecryptBtn, &QPushButton::clicked, this, &MainWindow::decryptRSA);
 }
 
@@ -100,3 +104,31 @@ void MainWindow::decryptRSA()
         }
     }
 }
+
+AesGestion AesGestion;
+void MainWindow::generateAES()
+{
+    QString directory = QFileDialog::getExistingDirectory(this, tr("Selectionner le repertoire"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if (!directory.isEmpty()) {
+        QString SecretKeyFile = directory + "/secret_key.key";
+        // Appel à la méthode generationClef pour générer et sauvegarder les clés
+        AesGestion.GenerateAESKey();
+    }
+}
+
+void MainWindow::decryptAES()
+{
+
+}
+
+
+void MainWindow::loadAESkey()
+{
+
+}
+
+
+
+
+
+
