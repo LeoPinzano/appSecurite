@@ -62,7 +62,10 @@
       <height>491</height>
      </rect>
     </property>
-    <widget class="QWidget" name="RSAstackedWidgetPage1" native="true">
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="RSAPage">
      <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
@@ -92,6 +95,44 @@
        </item>
        <item>
         <widget class="QPushButton" name="RSAdecryptBtn">
+         <property name="text">
+          <string>Déchiffrer un fichier</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="page">
+     <widget class="QWidget" name="verticalLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>30</y>
+        <width>451</width>
+        <height>421</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPushButton" name="RSAKeyBtn_2">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Générer une paire de clés</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="RSAencryptBtn_2">
+         <property name="text">
+          <string>Chiffrer un fichier</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="RSAdecryptBtn_2">
          <property name="text">
           <string>Déchiffrer un fichier</string>
          </property>
