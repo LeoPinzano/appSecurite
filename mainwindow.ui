@@ -62,7 +62,10 @@
       <height>491</height>
      </rect>
     </property>
-    <widget class="QWidget" name="RSAstackedWidgetPage1" native="true">
+    <property name="currentIndex">
+     <number>1</number>
+    </property>
+    <widget class="QWidget" name="RSAPage">
      <widget class="QWidget" name="verticalLayoutWidget">
       <property name="geometry">
        <rect>
@@ -94,6 +97,37 @@
         <widget class="QPushButton" name="RSAdecryptBtn">
          <property name="text">
           <string>Déchiffrer un fichier</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="ShaPage">
+     <widget class="QWidget" name="verticalLayoutWidget_2">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>30</y>
+        <width>451</width>
+        <height>421</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QPushButton" name="ShaCalcBtn">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Obtenir le hash (sha256) d'une chaine de caractère (dans un fichier)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="ShaCalcFileBtn">
+         <property name="text">
+          <string>Obtenir le hash Sha256 d'un fichier</string>
          </property>
         </widget>
        </item>
