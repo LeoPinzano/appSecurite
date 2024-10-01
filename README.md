@@ -1,10 +1,12 @@
  # AppSécurité
 Bienvenue sur le Projet Température en C++ avec l'utilisation de la libraire Cryptopp
 
-## Dépendance
-Lien pour télécharger la librairie  [Cryptopp](https://github.com/weidai11/cryptopp/releases)
+## Dépendance>
+>[!CAUTION]
+>Lien pour télécharger la librairie  [Cryptopp](https://github.com/weidai11/cryptopp/releases)
+>et  [CryptoCiel](https://github.com/PierreViland/CryptoCiel)
 
- ### Compilation des librairies :
+ ## Compilation des librairies :
 #### Cryptopp
 1. Vous aller devoir d'abord compiler la librairie Cryptopp :
 ```bash
@@ -34,6 +36,14 @@ git clone https://github.com/PierreViland/CryptoCiel.git
    git clone https://github.com/LeoPinzano/appSecurite.git
 ```
 ### RSA
-
+-
+-
+-
 ### AES256
+-
+-
+-
+
 ### Hash
+-
+-
