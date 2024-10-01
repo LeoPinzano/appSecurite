@@ -6,9 +6,11 @@
 #include <QInputDialog>
 #include <RsaGestion.h>
 #include <HashGestion.h>
+#include <AesGestion.h>
 
 RsaGestion rsaGestion;
 HashGestion hashGestion;
+AesGestion aesGestion;
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -17,18 +19,42 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // Ajout des pages existantes au stackedWidget
+    ui->stackedWidget->addWidget(ui->RSAPage);
+    ui->stackedWidget->addWidget(ui->AESPage);
+    ui->stackedWidget->addWidget(ui->ShaPage);
+
     // Connect buttons to their respective slots
     connect(ui->RSAKeyBtn, &QPushButton::clicked, this, &MainWindow::generateRSA);
     connect(ui->RSAencryptBtn, &QPushButton::clicked, this, &MainWindow::encryptRSA);
     connect(ui->RSAdecryptBtn, &QPushButton::clicked, this, &MainWindow::decryptRSA);
     connect(ui->ShaCalcBtn, &QPushButton::clicked, this, &MainWindow::calcSha);
     connect(ui->ShaCalcFileBtn, &QPushButton::clicked, this, &MainWindow::calcFileSha);
+    connect(ui->AESKeyBtn, &QPushButton::clicked, this, &MainWindow::generateAES);
+    connect(ui->AESencryptBtn, &QPushButton::clicked, this, &MainWindow::encryptAES);
+    connect(ui->AESdecryptBtn, &QPushButton::clicked, this, &MainWindow::decryptAES);
+    connect(ui->RSAbtn, &QPushButton::clicked, this, &MainWindow::showRSAPage);
+    connect(ui->AESbtn, &QPushButton::clicked, this, &MainWindow::showAESPage);
+    connect(ui->SHA256btn, &QPushButton::clicked, this, &MainWindow::showShaPage);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
+void MainWindow::showRSAPage() {
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
+void MainWindow::showAESPage() {
+    ui->stackedWidget->setCurrentIndex(1);
+}
+
+void MainWindow::showShaPage() {
+    ui->stackedWidget->setCurrentIndex(2);
+}
+
 
 void MainWindow::generateRSA()
 {
@@ -107,7 +133,7 @@ void MainWindow::decryptRSA()
 
 void MainWindow::calcSha()
 {
-    QString fileToHash = QFileDialog::getOpenFileName(this, tr("Select File to Hash"), "", tr("All Files (*)"));
+    QString fileToHash = QFileDialog::getOpenFileName(this, tr("Selectionnez le message à hasher"), "", tr("All Files (*)"));
     if (!fileToHash.isEmpty()) {
         QFile file(fileToHash);
         if (file.open(QIODevice::ReadOnly)) {
@@ -117,24 +143,73 @@ void MainWindow::calcSha()
             HashGestion hashGestion;
             std::string hashResult = hashGestion.CalculateSHA256(fileData.toStdString());
 
-            QMessageBox::information(this, tr("SHA-256 Hash"), tr("The SHA-256 hash of the file is:\n") + QString::fromStdString(hashResult));
+            QMessageBox::information(this, tr("Hash SHA-256"), tr("Le SHA256 de votre message est:\n") + QString::fromStdString(hashResult));
         } else {
-            QMessageBox::warning(this, tr("Error"), tr("Unable to open the file."));
+            QMessageBox::warning(this, tr("Error"), tr("Impossible d'ouvrir le fichier message."));
         }
     }
 }
 
 void MainWindow::calcFileSha()
 {
-    QString fileToHash = QFileDialog::getOpenFileName(this, tr("Select File to Hash"), "", tr("All Files (*)"));
+    QString fileToHash = QFileDialog::getOpenFileName(this, tr("Selectionnez le fichier à hasher"), "", tr("All Files (*)"));
     if (!fileToHash.isEmpty()) {
         HashGestion hashGestion;
         std::string hashResult = hashGestion.CalculateFileSHA256(fileToHash.toStdString());
 
         if (!hashResult.empty()) {
-            QMessageBox::information(this, tr("SHA-256 Hash"), tr("The SHA-256 hash of the file is:\n") + QString::fromStdString(hashResult));
+            QMessageBox::information(this, tr("Hash SHA-256"), tr("Le SHA256 de votre fichier est:\n") + QString::fromStdString(hashResult));
         } else {
-            QMessageBox::warning(this, tr("Error"), tr("Unable to calculate the hash of the file."));
+            QMessageBox::warning(this, tr("Error"), tr("Impossible de calculer le hash du fichier."));
+        }
+    }
+}
+
+
+void MainWindow::generateAES()
+{
+    QString directory = QFileDialog::getExistingDirectory(this, tr("Selectionnez le répértoire"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if (!directory.isEmpty()) {
+        QString keyFile = directory + "/aes_key.key";
+
+        AesGestion aesGestion;
+        aesGestion.GenerateAESKey();
+        aesGestion.SaveAESKeyToFile(keyFile.toStdString());
+
+        QMessageBox::information(this, tr("AES Key Generated"), tr("La clé AES à été enregistré dans le répértoir choisis."));
+    }
+}
+
+void MainWindow::encryptAES()
+{
+    QString keyFile = QFileDialog::getOpenFileName(this, tr("Ouverture clé AES"), "", tr("Key Files (*.key);;All Files (*)"));
+    if (!keyFile.isEmpty()) {
+        QString fileToEncrypt = QFileDialog::getOpenFileName(this, tr("Selectionnez le fichier à chiffrer"), "", tr("All Files (*)"));
+        if (!fileToEncrypt.isEmpty()) {
+            QString encryptedFile = QFileDialog::getSaveFileName(this, tr("Sauvegarde du fichier chiffré"), "", tr("Encrypted Files (*.enc);;All Files (*)"));
+            if (!encryptedFile.isEmpty()) {
+                AesGestion aesGestion;
+                aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
+                aesGestion.EncryptFileAES256(fileToEncrypt.toStdString(), encryptedFile.toStdString());
+                QMessageBox::information(this, tr("File Encrypted"), tr("Fichier chiffré sauvegarder vers:\n") + encryptedFile);
+            }
+        }
+    }
+}
+
+void MainWindow::decryptAES()
+{
+    QString keyFile = QFileDialog::getOpenFileName(this, tr("Ouverture clé AES"), "", tr("Key Files (*.key);;All Files (*)"));
+    if (!keyFile.isEmpty()) {
+        QString encryptedFile = QFileDialog::getOpenFileName(this, tr("Ouverture fichier chiffré"), "", tr("Encrypted Files (*.enc);;All Files (*)"));
+        if (!encryptedFile.isEmpty()) {
+            QString decryptedFile = QFileDialog::getSaveFileName(this, tr("Sauvegarde du fichier déchiffré"), "", tr("Decrypted Files (*.*);;All Files (*)"));
+            if (!decryptedFile.isEmpty()) {
+                AesGestion aesGestion;
+                aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
+                aesGestion.DecryptFileAES256(encryptedFile.toStdString(), decryptedFile.toStdString());
+                QMessageBox::information(this, tr("File Decrypted"), tr("Fichier déchiffré enregistré vers:\n") + decryptedFile);
+            }
         }
     }
 }

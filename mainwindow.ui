@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="RSAbtn">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>130</y>
+      <x>50</x>
+      <y>170</y>
       <width>111</width>
       <height>51</height>
      </rect>
@@ -30,8 +30,8 @@
    <widget class="QPushButton" name="AESbtn">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>210</y>
+      <x>50</x>
+      <y>250</y>
       <width>111</width>
       <height>51</height>
      </rect>
@@ -43,8 +43,8 @@
    <widget class="QPushButton" name="SHA256btn">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>290</y>
+      <x>50</x>
+      <y>330</y>
       <width>111</width>
       <height>51</height>
      </rect>
@@ -95,6 +95,44 @@
        </item>
        <item>
         <widget class="QPushButton" name="RSAdecryptBtn">
+         <property name="text">
+          <string>Déchiffrer un fichier</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="AESPage">
+     <widget class="QWidget" name="verticalLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>30</y>
+        <width>451</width>
+        <height>421</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QPushButton" name="AESKeyBtn">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="text">
+          <string>Générer une clé secrète</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="AESencryptBtn">
+         <property name="text">
+          <string>Chiffrer un fichier</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="AESdecryptBtn">
          <property name="text">
           <string>Déchiffrer un fichier</string>
          </property>
