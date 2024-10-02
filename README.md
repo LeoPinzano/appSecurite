@@ -15,16 +15,16 @@ Bienvenue sur le Projet Température en C++ avec l'utilisation de la libraire Cr
 ```
 2. Compilez les projets
 ### RSA
-- Lorsque vous cliquez sur **Généner une paire de clés**, vous allez devoir séléctionner votre répertoire où vous voulez que vos clés soit stockées. Vos clés publique et privé sont sous la forme (**public_key.key**; **private_key.key**)
+- Lorsque vous cliquez sur **Généner une paire de clés**, vous allez devoir séléctionner votre répertoire où vous voulez que vos clés soit stockées. Vos clés publique et privé sont sous la forme (**cle_pub.key**; **cle_priv.key**)
 - Lorsque vous cliquez **Chiffrer un fichier**, vous avez le choix entre **Chiffrer un message** ou **Chiffrer un fichier**
   1. Vous pouvez mettre un message et ce dernier va être chiffrer dans un fichier en *.crypt*
   2. Vous pouvez chiffrer un fichier de votre choix
-- Lorsque vous cliquez **Déchiffrer un fichier**, vous pouvez Séléctionnez **public_key.key**
+- Lorsque vous cliquez **Déchiffrer un fichier**, vous pouvez Séléctionnez **cle_priv.key**
   
   ### AES256
-- Lorsque vous cliquez sur **Généner une clé secrète**, vous pouvez séléctionner votre répertoire où vous voulez que vos clés soit stockées. Votre clé secrète sous la forme (**aes_key.key**)
-- Lorsque vous cliquez sur **Chiffrer un fichier**, vous séléctionnez votre fichier à chiffrer puis ensuite vous pouvez séléctionnez votre clé secrète **aes_key.key** (Votre Fichier sera chiffré en *.enc*)
--Lorsque vous cliquez sur **Déchiffrer un fichier**, vous pouvez Séléctionnez **public_key.key**
+- Lorsque vous cliquez sur **Généner une clé secrète**, vous pouvez séléctionner votre répertoire où vous voulez que vos clés soit stockées. Votre clé secrète sous la forme (**cle_aes.key**)
+- Lorsque vous cliquez sur **Chiffrer un fichier**, vous séléctionnez votre fichier à chiffrer puis ensuite vous pouvez séléctionnez votre clé secrète **cle_aes.key** (Votre Fichier sera chiffré en *.enc*)
+-Lorsque vous cliquez sur **Déchiffrer un fichier**, vous pouvez Séléctionnez **cle_aes.key**
 
 ### SHA256
 - Lorsque vous cliquez sur **Obtenir le hash d'une chaîne de caractère dans un fichier**, vous pouvez lire le hash contenu dans un fichier
