@@ -38,5 +38,6 @@ private:
     QPushButton *AESbtn;
     QPushButton *SHA256btn;
     QStackedWidget *stackedWidget;
+    QString baseDirectory;  // Répertoire de base
 };
 #endif // MAINWINDOW_H
