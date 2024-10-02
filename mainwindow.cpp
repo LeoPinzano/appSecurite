@@ -20,9 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // Demander le répertoire de base au démarrage
-    baseDirectory = QFileDialog::getExistingDirectory(this, tr("Select Base Directory"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    baseDirectory = QFileDialog::getExistingDirectory(this, tr("Séléctionnez le réprtoire de base"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if (baseDirectory.isEmpty()) {
-        QMessageBox::warning(this, tr("No Directory Selected"), tr("No base directory selected. The application will now close."));
+        QMessageBox::warning(this, tr("Aucun répertoire séléctionné"), tr("Aucun répertoire séléctionné. Fermeture de l'application."));
         QCoreApplication::quit();
     }
 
@@ -77,16 +77,13 @@ void MainWindow::showShaPage() {
 
 void MainWindow::generateRSA()
 {
-    QString directory = QFileDialog::getExistingDirectory(this, tr("Selectionner le repertoire"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    if (!directory.isEmpty()) {
-        QString publicKeyFile = directory + "/public_key.key";
-        QString privateKeyFile = directory + "/private_key.key";
+    QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
+    QString privateKeyFile = baseDirectory + "/cles/cle_priv.key";
 
-        // Appel à la méthode generationClef pour générer et sauvegarder les clés
-        rsaGestion.generationClef(publicKeyFile.toStdString(), privateKeyFile.toStdString(), 2048);
+    // Appel à la méthode generationClef pour générer et sauvegarder les clés
+    rsaGestion.generationClef(publicKeyFile.toStdString(), privateKeyFile.toStdString(), 2048);
 
-        QMessageBox::information(this, tr("Clés générées"), tr("Les clés publique et privé ont été enregistrées dans le même répértoire."));
-    }
+    QMessageBox::information(this, tr("Clés générées"), tr("Les clés publique et privé ont été enregistrées dans le répértoire:\n") + baseDirectory +  "/cles/");
 }
 
 void MainWindow::encryptRSA()
@@ -104,11 +101,11 @@ void MainWindow::encryptRSA()
             // Chiffrer un message
             QString message = QInputDialog::getText(this, tr("Entrer un message"), tr("Message:"), QLineEdit::Normal, "", &ok);
             if (ok && !message.isEmpty()) {
-                QString publicKeyFile = QFileDialog::getOpenFileName(this, tr("Séléction clé publique"), "", tr("Key Files (*.key);;All Files (*)"));
+                QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
                 if (!publicKeyFile.isEmpty()) {
                     // Charger la clé publique et chiffrer le message
                     rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
-                    QString encryptedFile = QFileDialog::getSaveFileName(this, tr("Sauvegarde message chiffré"), "", tr("Encrypted Files (*.crypt);;All Files (*)"));
+                    QString encryptedFile = baseDirectory + "/chiffre/" + QFileDialog::getSaveFileName(this, tr("Sauvegarde message chiffré"), "", tr("Encrypted Files (*.crypt);;All Files (*)"));
                     if (!encryptedFile.isEmpty()) {
                         rsaGestion.chiffreDansFichier(message.toStdString(), encryptedFile.toStdString());
                         QMessageBox::information(this, tr("Message chiffré"), tr("Message chiffré enregistré vers:\n") + encryptedFile);
@@ -117,11 +114,11 @@ void MainWindow::encryptRSA()
             }
         } else if (choice == tr("Chiffrer un fichier (recommandé pour clé AES ou Hash)")) {
             // Chiffrer un fichier
-            QString publicKeyFile = QFileDialog::getOpenFileName(this, tr("Séléction clé publique"), "", tr("Key Files (*.key);;All Files (*)"));
+            QString publicKeyFile = baseDirectory + "/cles/cle_aes.key";
             if (!publicKeyFile.isEmpty()) {
                 QString fileToEncrypt = QFileDialog::getOpenFileName(this, tr("Séléction fichier"), "", tr("All Files (*)"));
                 if (!fileToEncrypt.isEmpty()) {
-                    QString encryptedFile = QFileDialog::getSaveFileName(this, tr("Sauvegarde fichier chiffré"), "", tr("Encrypted Files (*.crypt);;All Files (*)"));
+                    QString encryptedFile = baseDirectory + "/chiffre/" + QFileInfo(fileToEncrypt).fileName() + ".crypt";
                     if (!encryptedFile.isEmpty()) {
                         rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
                         rsaGestion.chiffrementFichier(fileToEncrypt.toStdString(), encryptedFile.toStdString(), true);
@@ -137,10 +134,11 @@ void MainWindow::decryptRSA()
 {
     QString encryptedFile = QFileDialog::getOpenFileName(this, tr("Ouvrir fichier chiffré"), "", tr("Encrypted Files (*.crypt);;All Files (*)"));
     if (!encryptedFile.isEmpty()) {
-        QString privateKeyFile = QFileDialog::getOpenFileName(this, tr("Selection clé privé"), "", tr("Key Files (*.key);;All Files (*)"));
+        QString privateKeyFile = baseDirectory + "/cles/cle_priv.key";
         if (!privateKeyFile.isEmpty()) {
-            QString decryptedFile = QFileDialog::getSaveFileName(this, tr("Sauvegarde fichier déchiffré"), "", tr("Decrypted Files (*.decrypt);;All Files (*)"));
+            QString decryptedFile = baseDirectory + "/dechiffre/" + QFileInfo(encryptedFile).completeBaseName() + ".decrypt";
             if (!decryptedFile.isEmpty()) {
+                RsaGestion rsaGestion;
                 rsaGestion.chargementClefsPrive(privateKeyFile.toStdString());
                 rsaGestion.dechiffrementFichier(encryptedFile.toStdString(), decryptedFile.toStdString(), true);
                 QMessageBox::information(this, tr("Fichier déchiffré"), tr("Fichier déchiffré enregistré vers:\n") + decryptedFile);
