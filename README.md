@@ -13,19 +13,23 @@ Bienvenue sur le Projet Température en C++ avec l'utilisation de la libraire Cr
   ```bash
    git clone https://github.com/LeoPinzano/appSecurite.git
 ```
-2. 
+2. Compilez les projets
 ### RSA
--
--
--
-### AES256
--
--
--
+- Lorsque vous cliquez sur **Généner une paire de clés**, vous allez devoir séléctionner votre répertoire où vous voulez que vos clés soit stockées. Vos clés publique et privé sont sous la forme (**public_key.key**; **private_key.key**)
+- Lorsque vous cliquez **Chiffrer un fichier**, vous avez le choix entre **Chiffrer un message** ou **Chiffrer un fichier**
+  1. Vous pouvez mettre un message et ce dernier va être chiffrer dans un fichier en *.crypt*
+  2. Vous pouvez chiffrer un fichier de votre choix
+- Lorsque vous cliquez **Déchiffrer un fichier**, vous pouvez Séléctionnez **public_key.key**
+  
+  ### AES256
+- Lorsque vous cliquez sur **Généner une clé secrète**, vous pouvez séléctionner votre répertoire où vous voulez que vos clés soit stockées. Votre clé secrète sous la forme (**aes_key.key**)
+- Lorsque vous cliquez sur **Chiffrer un fichier**, vous séléctionnez votre fichier à chiffrer puis ensuite vous pouvez séléctionnez votre clé secrète **aes_key.key** (Votre Fichier sera chiffré en *.enc*)
+-Lorsque vous cliquez sur **Déchiffrer un fichier**, vous pouvez Séléctionnez **public_key.key**
 
-### Hash
--
--
+### SHA256
+- Lorsque vous cliquez sur **Obtenir le hash d'une chaîne de caractère dans un fichier**, vous pouvez lire le hash contenu dans un fichier
+- Lorsque vous cliquez sur **Obtenir le hash d'un fichier**, vous pouvez lire du fichier
+
  ## Compilation des librairies :
 #### Cryptopp
 1. Vous aller devoir d'abord compiler la librairie Cryptopp :
@@ -53,9 +57,9 @@ git clone https://github.com/PierreViland/CryptoCiel.git
  ## Importer des biliothèques sur QT :
 1. Ouvrez **appSecurite.pro**
 2. Faites clic-droit sur **appSecurite[main]** --> **Ajouter une Bibliothèque**
-3. Cocher **Bibliothèque externe** puis **Suivant**
-4. assurer vous de bien avoir mis le type de bibliothèque en **Windows (*.lib lib* a)**
-5. Cocher **Bibliothèque Statique**
+3. Cochez **Bibliothèque externe** puis **Suivant**
+4. Assurez vous de bien avoir mis le type de bibliothèque en **Windows (*.lib lib* a)**
+5. Cochez **Bibliothèque Statique**
 6. Dans **Fichier de Bibliothèque** mettez votre fichier en *.lib*  qui est dans le chemin d'accès **\Cryptopp\x64\Release**
-7. Dans **Chemin d'inclusion** Vous devez selectionnez l'endroit où son stocké vos fichier en *.h*
-8. Faite de même pour la libraire **CryptoCiel**
+7. Dans **Chemin d'inclusion** Vous devez selectionnez l'endroit où son stocké vos fichiers **Header** en *.h*
+8. Faites de même pour la libraire **CryptoCiel**
