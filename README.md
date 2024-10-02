@@ -2,10 +2,30 @@
 Bienvenue sur le Projet Température en C++ avec l'utilisation de la libraire Cryptopp
 
 ## Dépendances
->[!CAUTION]
+>[!WARNING]
 >Lien pour télécharger la librairie  [Cryptopp](https://github.com/weidai11/cryptopp/releases)
 >et  [CryptoCiel](https://github.com/LeoPinzano/CryptoCiel.git)
+## Mode d'emploi
+>[!CAUTION]
+ >Assurer vous de bien avoir importer les librairies sinon voir **Compilation des librairies (ci-dessous)**
+ 
+ 1. Clonez ce dépôt sur votre machine locale :
+  ```bash
+   git clone https://github.com/LeoPinzano/appSecurite.git
+```
+2. 
+### RSA
+-
+-
+-
+### AES256
+-
+-
+-
 
+### Hash
+-
+-
  ## Compilation des librairies :
 #### Cryptopp
 1. Vous aller devoir d'abord compiler la librairie Cryptopp :
@@ -30,20 +50,12 @@ git clone https://github.com/PierreViland/CryptoCiel.git
 6. Faites clic-droit sur **cryptoCielTest** --> **Générér**
 7. Vous allez normalement trouver votre fichier en *.lib*  sur le chemin d'accès **\CryptoCiel\x64\Release**
 
-## Mode d'emploi
- 1. Clonez ce dépôt sur votre machine locale :
-  ```bash
-   git clone https://github.com/LeoPinzano/appSecurite.git
-```
-### RSA
--
--
--
-### AES256
--
--
--
-
-### Hash
--
--
+ ## Importer des biliothèques sur QT :
+1. Ouvrez **appSecurite.pro**
+2. Faites clic-droit sur **appSecurite[main]** --> **Ajouter une Bibliothèque**
+3. Cocher **Bibliothèque externe** puis **Suivant**
+4. assurer vous de bien avoir mis le type de bibliothèque en **Windows (*.lib lib* a)**
+5. Cocher **Bibliothèque Statique**
+6. Dans **Fichier de Bibliothèque** mettez votre fichier en *.lib*  qui est dans le chemin d'accès **\Cryptopp\x64\Release**
+7. Dans **Chemin d'inclusion** Vous devez selectionnez l'endroit où son stocké vos fichier en *.h*
+8. Faite de même pour la libraire **CryptoCiel**
