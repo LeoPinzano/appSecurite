@@ -116,11 +116,12 @@ void MainWindow::generateRSA()
 {
     QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
     QString privateKeyFile = baseDirectory + "/cles/cle_priv.key";
-
-    // Appel à la méthode generationClef pour générer et sauvegarder les clés
-    rsaGestion.generationClef(publicKeyFile.toStdString(), privateKeyFile.toStdString(), 2048);
-
-    QMessageBox::information(this, tr("Clés générées"), tr("Les clés publique et privé ont été enregistrées dans le répértoire:\n") + baseDirectory +  "/cles/");
+    try {
+        rsaGestion.generationClef(publicKeyFile.toStdString(), privateKeyFile.toStdString(), 2048);
+        QMessageBox::information(this, tr("Clés générées"), tr("Les clés publique et privée ont été enregistrées dans le répertoire:\n") + baseDirectory + "/cles/");
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Erreur de génération des clés"), tr("Impossible de générer les clés RSA : ") + QString(e.what()));
+    }
 }
 
 void MainWindow::encryptRSA()
@@ -131,48 +132,62 @@ void MainWindow::encryptRSA()
     QString choice = QInputDialog::getItem(this, tr("Choix de chiffrement"), tr("Que voulez-vous chiffrer ?"), options, 0, false, &ok);
 
     if (!ok || choice.isEmpty()) {
+        QMessageBox::warning(this, tr("Opération annulée"), tr("Aucune option sélectionnée."));
         return;
     }
+
+    RsaGestion rsaGestion;
 
     if (choice == tr("Chiffrer un message")) {
         QString message = QInputDialog::getText(this, tr("Entrer un message"), tr("Message:"), QLineEdit::Normal, "", &ok);
         if (!ok || message.isEmpty()) {
+            QMessageBox::warning(this, tr("Opération annulée"), tr("Aucun message saisi."));
             return;
         }
 
         QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
         if (!QFile::exists(publicKeyFile)) {
-            QMessageBox::warning(this, tr("Erreur"), tr("Clé publique non trouvée."));
+            QMessageBox::critical(this, tr("Erreur"), tr("Fichier de clé publique non trouvé : ") + publicKeyFile);
             return;
         }
 
-        rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
+        try {
+            rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, tr("Erreur"), tr("Impossible de charger la clé publique : ") + QString(e.what()));
+            return;
+        }
 
-        QString encryptedFileName = "message_chiffre_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".crypt";
-        QString encryptedFilePath = baseDirectory + "/chiffre/" + encryptedFileName;
+        QString encryptedFile = baseDirectory + "/chiffre/" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + "_message.crypt";
+        try {
+            rsaGestion.chiffreDansFichier(message.toStdString(), encryptedFile.toStdString());
+            QMessageBox::information(this, tr("Message chiffré"), tr("Message chiffré enregistré vers:\n") + encryptedFile);
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, tr("Erreur de chiffrement"), tr("Impossible de chiffrer le message : ") + QString(e.what()));
+        }
+    } else if (choice == tr("Chiffrer un fichier (recommandé pour clé AES ou Hash)")) {
+        QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
+        if (!QFile::exists(publicKeyFile)) {
+            QMessageBox::critical(this, tr("Erreur"), tr("Fichier de clé publique non trouvé : ") + publicKeyFile);
+            return;
+        }
+
+        QString fileToEncrypt = QFileDialog::getOpenFileName(this, tr("Sélection fichier"), "", tr("All Files (*)"));
+        if (fileToEncrypt.isEmpty()) {
+            QMessageBox::warning(this, tr("Opération annulée"), tr("Aucun fichier sélectionné."));
+            return;
+        }
+
+        QString encryptedFile = baseDirectory + "/chiffre/" + QFileInfo(fileToEncrypt).fileName() + ".crypt";
 
         try {
-            rsaGestion.chiffreDansFichier(message.toStdString(), encryptedFilePath.toStdString());
-            QMessageBox::information(this, tr("Message chiffré"), tr("Message chiffré enregistré vers:\n") + encryptedFilePath);
+            rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
+            rsaGestion.chiffrementFichier(fileToEncrypt.toStdString(), encryptedFile.toStdString(), true);
+            QMessageBox::information(this, tr("Fichier chiffré"), tr("Fichier chiffré enregistré vers:\n") + encryptedFile);
         } catch (const std::exception& e) {
-            QMessageBox::warning(this, tr("Erreur"), tr("Impossible de chiffrer le message : ") + QString(e.what()));
+            QMessageBox::critical(this, tr("Erreur de chiffrement"), tr("Impossible de chiffrer le fichier : ") + QString(e.what()));
         }
     }
-    else if (choice == tr("Chiffrer un fichier (recommandé pour clé AES ou Hash)")) {
-    // Chiffrer un fichier
-    QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
-    if (!publicKeyFile.isEmpty()) {
-        QString fileToEncrypt = QFileDialog::getOpenFileName(this, tr("Séléction fichier"), "", tr("All Files (*)"));
-        if (!fileToEncrypt.isEmpty()) {
-            QString encryptedFile = baseDirectory + "/chiffre/" + QFileInfo(fileToEncrypt).fileName() + ".crypt";
-            if (!encryptedFile.isEmpty()) {
-                rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
-                rsaGestion.chiffrementFichier(fileToEncrypt.toStdString(), encryptedFile.toStdString(), true);
-                QMessageBox::information(this, tr("Fichier chiffré"), tr("Fichier chiffré enregistré vers:\n") + encryptedFile);
-            }
-        }
-    }
-}
 }
 
 void MainWindow::decryptRSA()
@@ -180,14 +195,18 @@ void MainWindow::decryptRSA()
     QString encryptedFile = QFileDialog::getOpenFileName(this, tr("Ouvrir fichier chiffré"), "", tr("Encrypted Files (*.crypt);;All Files (*)"));
     if (!encryptedFile.isEmpty()) {
         QString privateKeyFile = baseDirectory + "/cles/cle_priv.key";
-        if (!privateKeyFile.isEmpty()) {
-            QString decryptedFile = baseDirectory + "/dechiffre/" + QFileInfo(encryptedFile).completeBaseName() + ".decrypt";
-            if (!decryptedFile.isEmpty()) {
-                RsaGestion rsaGestion;
-                rsaGestion.chargementClefsPrive(privateKeyFile.toStdString());
-                rsaGestion.dechiffrementFichier(encryptedFile.toStdString(), decryptedFile.toStdString(), true);
-                QMessageBox::information(this, tr("Fichier déchiffré"), tr("Fichier déchiffré enregistré vers:\n") + decryptedFile);
-            }
+        if (!QFile::exists(privateKeyFile)) {
+            QMessageBox::warning(this, tr("Erreur"), tr("Fichier de clé privée non trouvé : ") + privateKeyFile);
+            return;
+        }
+        QString decryptedFile = baseDirectory + "/dechiffre/" + QFileInfo(encryptedFile).completeBaseName() + ".decrypt";
+        try {
+            RsaGestion rsaGestion;
+            rsaGestion.chargementClefsPrive(privateKeyFile.toStdString());
+            rsaGestion.dechiffrementFichier(encryptedFile.toStdString(), decryptedFile.toStdString(), true);
+            QMessageBox::information(this, tr("Fichier déchiffré"), tr("Fichier déchiffré enregistré vers:\n") + decryptedFile);
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, tr("Erreur de déchiffrement"), tr("Impossible de déchiffrer le fichier : ") + QString(e.what()));
         }
     }
 }
@@ -201,13 +220,14 @@ void MainWindow::calcSha()
         if (file.open(QIODevice::ReadOnly)) {
             QByteArray fileData = file.readAll();
             file.close();
-
-            HashGestion hashGestion;
-            std::string hashResult = hashGestion.CalculateSHA256(fileData.toStdString());
-
-            QMessageBox::information(this, tr("Hash SHA-256"), tr("Le SHA256 de votre message est:\n") + QString::fromStdString(hashResult));
+            try {
+                std::string hashResult = hashGestion.CalculateSHA256(fileData.toStdString());
+                QMessageBox::information(this, tr("Hash SHA-256"), tr("Le SHA256 de votre message est:\n") + QString::fromStdString(hashResult));
+            } catch (const std::exception& e) {
+                QMessageBox::critical(this, tr("Erreur de calcul du hash"), tr("Impossible de calculer le hash : ") + QString(e.what()));
+            }
         } else {
-            QMessageBox::warning(this, tr("Error"), tr("Impossible d'ouvrir le fichier message."));
+            QMessageBox::warning(this, tr("Erreur"), tr("Impossible d'ouvrir le fichier message."));
         }
     }
 }
@@ -216,13 +236,15 @@ void MainWindow::calcFileSha()
 {
     QString fileToHash = QFileDialog::getOpenFileName(this, tr("Selectionnez le fichier à hasher"), "", tr("All Files (*)"));
     if (!fileToHash.isEmpty()) {
-        HashGestion hashGestion;
-        std::string hashResult = hashGestion.CalculateFileSHA256(fileToHash.toStdString());
-
-        if (!hashResult.empty()) {
-            QMessageBox::information(this, tr("Hash SHA-256"), tr("Le SHA256 de votre fichier est:\n") + QString::fromStdString(hashResult));
-        } else {
-            QMessageBox::warning(this, tr("Error"), tr("Impossible de calculer le hash du fichier."));
+        try {
+            std::string hashResult = hashGestion.CalculateFileSHA256(fileToHash.toStdString());
+            if (!hashResult.empty()) {
+                QMessageBox::information(this, tr("Hash SHA-256"), tr("Le SHA256 de votre fichier est:\n") + QString::fromStdString(hashResult));
+            } else {
+                QMessageBox::warning(this, tr("Erreur"), tr("Impossible de calculer le hash du fichier."));
+            }
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, tr("Erreur de calcul du hash"), tr("Impossible de calculer le hash : ") + QString(e.what()));
         }
     }
 }
@@ -231,40 +253,54 @@ void MainWindow::calcFileSha()
 void MainWindow::generateAES()
 {
     QString keyFile = baseDirectory + "/cles/cle_aes.key";
-
-    AesGestion aesGestion;
-    aesGestion.GenerateAESKey();
-    aesGestion.SaveAESKeyToFile(keyFile.toStdString());
-
-    QMessageBox::information(this, tr("Clé AES générée"), tr("Clé AES enregistrée dans le répertoire:\n") + keyFile);
+    try {
+        AesGestion aesGestion;
+        aesGestion.GenerateAESKey();
+        aesGestion.SaveAESKeyToFile(keyFile.toStdString());
+        QMessageBox::information(this, tr("Clé AES générée"), tr("Clé AES enregistrée dans le répertoire:\n") + keyFile);
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, tr("Erreur de génération de clé AES"), tr("Impossible de générer la clé AES : ") + QString(e.what()));
+    }
 }
 
 void MainWindow::encryptAES()
 {
     QString keyFile = baseDirectory + "/cles/cle_aes.key";
+    if (!QFile::exists(keyFile)) {
+        QMessageBox::warning(this, tr("Erreur"), tr("Fichier de clé AES non trouvé : ") + keyFile);
+        return;
+    }
     QString fileToEncrypt = QFileDialog::getOpenFileName(this, tr("Séléctionnez le fichier à chiffrer"), "", tr("All Files (*)"));
     if (!fileToEncrypt.isEmpty()) {
         QString encryptedFile = baseDirectory + "/chiffre/" + QFileInfo(fileToEncrypt).fileName() + ".enc";
-
-        AesGestion aesGestion;
-        aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
-        aesGestion.EncryptFileAES256(fileToEncrypt.toStdString(), encryptedFile.toStdString());
-
-        QMessageBox::information(this, tr("Fichier chiffré"), tr("Fichier chiffré enregistré sous:\n") + encryptedFile);
+        try {
+            AesGestion aesGestion;
+            aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
+            aesGestion.EncryptFileAES256(fileToEncrypt.toStdString(), encryptedFile.toStdString());
+            QMessageBox::information(this, tr("Fichier chiffré"), tr("Fichier chiffré enregistré sous:\n") + encryptedFile);
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, tr("Erreur de chiffrement AES"), tr("Impossible de chiffrer le fichier : ") + QString(e.what()));
+        }
     }
 }
 
 void MainWindow::decryptAES()
 {
     QString keyFile = baseDirectory + "/cles/cle_aes.key";
+    if (!QFile::exists(keyFile)) {
+        QMessageBox::warning(this, tr("Erreur"), tr("Fichier de clé AES non trouvé : ") + keyFile);
+        return;
+    }
     QString encryptedFile = QFileDialog::getOpenFileName(this, tr("Ouvrir le fichier chiffre"), "", tr("Encrypted Files (*.enc);;All Files (*)"));
     if (!encryptedFile.isEmpty()) {
         QString decryptedFile = baseDirectory + "/dechiffre/" + QFileInfo(encryptedFile).completeBaseName();
-
-        AesGestion aesGestion;
-        aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
-        aesGestion.DecryptFileAES256(encryptedFile.toStdString(), decryptedFile.toStdString());
-
-        QMessageBox::information(this, tr("Fichier déchiffré"), tr("Fichier déchiffré enregistré sous:\n") + decryptedFile);
+        try {
+            AesGestion aesGestion;
+            aesGestion.LoadAESKeyFromFile(keyFile.toStdString());
+            aesGestion.DecryptFileAES256(encryptedFile.toStdString(), decryptedFile.toStdString());
+            QMessageBox::information(this, tr("Fichier déchiffré"), tr("Fichier déchiffré enregistré sous:\n") + decryptedFile);
+        } catch (const std::exception& e) {
+            QMessageBox::critical(this, tr("Erreur de déchiffrement AES"), tr("Impossible de déchiffrer le fichier : ") + QString(e.what()));
+        }
     }
 }
