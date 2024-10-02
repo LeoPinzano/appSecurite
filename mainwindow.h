@@ -31,6 +31,7 @@ private slots:
     void generateAES();
     void encryptAES();
     void decryptAES();
+    void changeBaseDirectory();
 
 private:
     Ui::MainWindow *ui;

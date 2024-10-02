@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QSettings>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -19,11 +20,22 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    // Demander le répertoire de base au démarrage
-    baseDirectory = QFileDialog::getExistingDirectory(this, tr("Séléctionnez le réprtoire de base"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    // Charger le répertoire de base depuis les paramètres
+    QSettings settings("VotreOrganisation", "VotreApplication");
+    baseDirectory = settings.value("baseDirectory").toString();
+
+    // Si le répertoire n'est pas défini, demander à l'utilisateur
     if (baseDirectory.isEmpty()) {
-        QMessageBox::warning(this, tr("Aucun répertoire séléctionné"), tr("Aucun répertoire séléctionné. Fermeture de l'application."));
-        QCoreApplication::quit();
+        baseDirectory = QFileDialog::getExistingDirectory(this, tr("Sélectionnez le répertoire de base"), "", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+        if (baseDirectory.isEmpty()) {
+            QMessageBox::warning(this, tr("Aucun répertoire sélectionné"), tr("Aucun répertoire sélectionné. Fermeture de l'application."));
+            QCoreApplication::quit();
+            return;
+        }
+
+        // Sauvegarder le répertoire choisi dans les paramètres
+        settings.setValue("baseDirectory", baseDirectory);
     }
 
     // Créer les sous-répertoires si nécessaire
@@ -74,6 +86,31 @@ void MainWindow::showShaPage() {
     ui->stackedWidget->setCurrentIndex(2);
 }
 
+void MainWindow::changeBaseDirectory()
+{
+    QString newDirectory = QFileDialog::getExistingDirectory(this, tr("Sélectionnez le nouveau répertoire de base"), baseDirectory, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+    if (!newDirectory.isEmpty()) {
+        baseDirectory = newDirectory;
+        QSettings settings("VotreOrganisation", "VotreApplication");
+        settings.setValue("baseDirectory", baseDirectory);
+
+        // Créer les sous-répertoires dans le nouveau répertoire
+        QDir dir(baseDirectory);
+        if (!dir.exists("cles")) {
+            dir.mkpath("cles");
+        }
+        if (!dir.exists("chiffre")) {
+            dir.mkpath("chiffre");
+        }
+        if (!dir.exists("dechiffre")) {
+            dir.mkpath("dechiffre");
+        }
+
+        QMessageBox::information(this, tr("Répertoire de base modifié"), tr("Le nouveau répertoire de base a été défini et sera utilisé à partir de maintenant."));
+    }
+}
+
 
 void MainWindow::generateRSA()
 {
@@ -88,46 +125,54 @@ void MainWindow::generateRSA()
 
 void MainWindow::encryptRSA()
 {
-    // Demander à l'utilisateur de choisir entre chiffrer un message ou un fichier
     QStringList options;
     options << tr("Chiffrer un message") << tr("Chiffrer un fichier (recommandé pour clé AES ou Hash)");
     bool ok;
     QString choice = QInputDialog::getItem(this, tr("Choix de chiffrement"), tr("Que voulez-vous chiffrer ?"), options, 0, false, &ok);
 
-    if (ok && !choice.isEmpty()) {
-        RsaGestion rsaGestion;
+    if (!ok || choice.isEmpty()) {
+        return;
+    }
 
-        if (choice == tr("Chiffrer un message")) {
-            // Chiffrer un message
-            QString message = QInputDialog::getText(this, tr("Entrer un message"), tr("Message:"), QLineEdit::Normal, "", &ok);
-            if (ok && !message.isEmpty()) {
-                QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
-                if (!publicKeyFile.isEmpty()) {
-                    // Charger la clé publique et chiffrer le message
-                    rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
-                    QString encryptedFile = baseDirectory + "/chiffre/" + QFileDialog::getSaveFileName(this, tr("Sauvegarde message chiffré"), "", tr("Encrypted Files (*.crypt);;All Files (*)"));
-                    if (!encryptedFile.isEmpty()) {
-                        rsaGestion.chiffreDansFichier(message.toStdString(), encryptedFile.toStdString());
-                        QMessageBox::information(this, tr("Message chiffré"), tr("Message chiffré enregistré vers:\n") + encryptedFile);
-                    }
-                }
-            }
-        } else if (choice == tr("Chiffrer un fichier (recommandé pour clé AES ou Hash)")) {
-            // Chiffrer un fichier
-            QString publicKeyFile = baseDirectory + "/cles/cle_aes.key";
-            if (!publicKeyFile.isEmpty()) {
-                QString fileToEncrypt = QFileDialog::getOpenFileName(this, tr("Séléction fichier"), "", tr("All Files (*)"));
-                if (!fileToEncrypt.isEmpty()) {
-                    QString encryptedFile = baseDirectory + "/chiffre/" + QFileInfo(fileToEncrypt).fileName() + ".crypt";
-                    if (!encryptedFile.isEmpty()) {
-                        rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
-                        rsaGestion.chiffrementFichier(fileToEncrypt.toStdString(), encryptedFile.toStdString(), true);
-                        QMessageBox::information(this, tr("Fichier chiffré"), tr("Fichier chiffré enregistré vers:\n") + encryptedFile);
-                    }
-                }
+    if (choice == tr("Chiffrer un message")) {
+        QString message = QInputDialog::getText(this, tr("Entrer un message"), tr("Message:"), QLineEdit::Normal, "", &ok);
+        if (!ok || message.isEmpty()) {
+            return;
+        }
+
+        QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
+        if (!QFile::exists(publicKeyFile)) {
+            QMessageBox::warning(this, tr("Erreur"), tr("Clé publique non trouvée."));
+            return;
+        }
+
+        rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
+
+        QString encryptedFileName = "message_chiffre_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".crypt";
+        QString encryptedFilePath = baseDirectory + "/chiffre/" + encryptedFileName;
+
+        try {
+            rsaGestion.chiffreDansFichier(message.toStdString(), encryptedFilePath.toStdString());
+            QMessageBox::information(this, tr("Message chiffré"), tr("Message chiffré enregistré vers:\n") + encryptedFilePath);
+        } catch (const std::exception& e) {
+            QMessageBox::warning(this, tr("Erreur"), tr("Impossible de chiffrer le message : ") + QString(e.what()));
+        }
+    }
+    else if (choice == tr("Chiffrer un fichier (recommandé pour clé AES ou Hash)")) {
+    // Chiffrer un fichier
+    QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
+    if (!publicKeyFile.isEmpty()) {
+        QString fileToEncrypt = QFileDialog::getOpenFileName(this, tr("Séléction fichier"), "", tr("All Files (*)"));
+        if (!fileToEncrypt.isEmpty()) {
+            QString encryptedFile = baseDirectory + "/chiffre/" + QFileInfo(fileToEncrypt).fileName() + ".crypt";
+            if (!encryptedFile.isEmpty()) {
+                rsaGestion.chargementClefsPublic(publicKeyFile.toStdString());
+                rsaGestion.chiffrementFichier(fileToEncrypt.toStdString(), encryptedFile.toStdString(), true);
+                QMessageBox::information(this, tr("Fichier chiffré"), tr("Fichier chiffré enregistré vers:\n") + encryptedFile);
             }
         }
     }
+}
 }
 
 void MainWindow::decryptRSA()
