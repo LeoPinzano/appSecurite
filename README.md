@@ -1,10 +1,10 @@
  # AppSécurité
 Bienvenue sur le Projet Température en C++ avec l'utilisation de la libraire Cryptopp
 
-## Dépendance>
+## Dépendances
 >[!CAUTION]
 >Lien pour télécharger la librairie  [Cryptopp](https://github.com/weidai11/cryptopp/releases)
->et  [CryptoCiel](https://github.com/PierreViland/CryptoCiel)
+>et  [CryptoCiel](https://github.com/LeoPinzano/CryptoCiel.git)
 
  ## Compilation des librairies :
 #### Cryptopp
