@@ -173,6 +173,19 @@
      </widget>
     </widget>
    </widget>
+   <widget class="QPushButton" name="changeBaseDirButton">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>510</y>
+      <width>141</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Changer de répertoire</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

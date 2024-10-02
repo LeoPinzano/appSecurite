@@ -1,3 +1,10 @@
+/**
+ * @file mainwindow.cpp
+ * @brief Implémentation de la classe MainWindow
+ * @details Ce fichier contient l'implémentation des fonctionnalités principales de l'interface utilisateur,
+ * y compris la gestion des clés RSA et AES, le chiffrement et déchiffrement de fichiers, et le calcul de hashes SHA-256.
+ */
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QSettings>
@@ -13,7 +20,12 @@ RsaGestion rsaGestion;
 HashGestion hashGestion;
 AesGestion aesGestion;
 
-
+/**
+ * @brief Constructeur de MainWindow
+ * @param parent Pointeur vers le widget parent
+ * @details Initialise l'interface utilisateur, demande à l'utilisateur de sélectionner un répertoire de base,
+ * crée les sous-répertoires nécessaires et configure les connexions des boutons.
+ */
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -67,25 +79,52 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->RSAbtn, &QPushButton::clicked, this, &MainWindow::showRSAPage);
     connect(ui->AESbtn, &QPushButton::clicked, this, &MainWindow::showAESPage);
     connect(ui->SHA256btn, &QPushButton::clicked, this, &MainWindow::showShaPage);
+    connect(ui->changeBaseDirButton, &QPushButton::clicked, this, &MainWindow::changeBaseDirectory);
 }
 
+/**
+ * @brief Destructeur de MainWindow
+ * @details Libère les ressources allouées pour l'interface utilisateur.
+ */
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
+/**
+ * @brief Affiche la page RSA dans l'interface
+ * @details Change l'index du QStackedWidget pour afficher la page dédiée aux opérations RSA.
+ */
 void MainWindow::showRSAPage() {
     ui->stackedWidget->setCurrentIndex(0);
 }
 
+/**
+ * @brief Affiche la page AES dans l'interface
+ * @details Change l'index du QStackedWidget pour afficher la page dédiée aux opérations AES.
+ */
 void MainWindow::showAESPage() {
     ui->stackedWidget->setCurrentIndex(1);
 }
 
+/**
+ * @brief Affiche la page Sha256 dans l'interface
+ * @details Change l'index du QStackedWidget pour afficher la page dédiée aux opérations Sha256.
+ */
 void MainWindow::showShaPage() {
     ui->stackedWidget->setCurrentIndex(2);
 }
 
+/**
+ * @brief Change le répertoire de base de l'application
+ * @details Cette fonction permet à l'utilisateur de sélectionner un nouveau répertoire de base pour l'application.
+ * Elle met à jour la variable baseDirectory, sauvegarde le nouveau chemin dans les paramètres de l'application,
+ * crée les sous-répertoires nécessaires (cles, chiffre, dechiffre) dans le nouveau répertoire,
+ * et informe l'utilisateur du changement.
+ *
+ * @note Cette fonction utilise QSettings pour sauvegarder le nouveau répertoire de base de manière persistante.
+ * @note Les sous-répertoires sont créés automatiquement si ils n'existent pas déjà dans le nouveau répertoire.
+ */
 void MainWindow::changeBaseDirectory()
 {
     QString newDirectory = QFileDialog::getExistingDirectory(this, tr("Sélectionnez le nouveau répertoire de base"), baseDirectory, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
@@ -111,7 +150,11 @@ void MainWindow::changeBaseDirectory()
     }
 }
 
-
+/**
+ * @brief Génère une nouvelle paire de clés RSA
+ * @details Crée une nouvelle paire de clés RSA (publique et privée) et les enregistre dans le répertoire de base.
+ * Utilise une taille de clé de 2048 bits. Affiche un message de confirmation à l'utilisateur.
+ */
 void MainWindow::generateRSA()
 {
     QString publicKeyFile = baseDirectory + "/cles/cle_pub.key";
@@ -124,6 +167,14 @@ void MainWindow::generateRSA()
     }
 }
 
+/**
+ * @brief Chiffre un message ou un fichier avec RSA
+ * @details Offre à l'utilisateur le choix entre chiffrer un message texte ou un fichier.
+ * Pour un message, demande la saisie du texte et le chiffre.
+ * Pour un fichier, permet à l'utilisateur de sélectionner le fichier à chiffrer.
+ * Utilise la clé publique RSA stockée dans le répertoire de base.
+ * Enregistre le résultat chiffré dans le sous-répertoire 'chiffre'.
+ */
 void MainWindow::encryptRSA()
 {
     QStringList options;
@@ -190,6 +241,12 @@ void MainWindow::encryptRSA()
     }
 }
 
+/**
+ * @brief Déchiffre un fichier avec RSA
+ * @details Permet à l'utilisateur de sélectionner un fichier chiffré.
+ * Utilise la clé privée RSA stockée dans le répertoire de base pour déchiffrer.
+ * Enregistre le fichier déchiffré dans le sous-répertoire 'dechiffre'.
+ */
 void MainWindow::decryptRSA()
 {
     QString encryptedFile = QFileDialog::getOpenFileName(this, tr("Ouvrir fichier chiffré"), "", tr("Encrypted Files (*.crypt);;All Files (*)"));
@@ -211,7 +268,12 @@ void MainWindow::decryptRSA()
     }
 }
 
-
+/**
+ * @brief Calcule le hash SHA-256 d'un message
+ * @details Permet à l'utilisateur de sélectionner un fichier contenant le message.
+ * Lit le contenu du fichier et calcule son hash SHA-256.
+ * Affiche le résultat du hash à l'utilisateur.
+ */
 void MainWindow::calcSha()
 {
     QString fileToHash = QFileDialog::getOpenFileName(this, tr("Selectionnez le message à hasher"), "", tr("All Files (*)"));
@@ -232,6 +294,12 @@ void MainWindow::calcSha()
     }
 }
 
+/**
+ * @brief Calcule le hash SHA-256 d'un fichier
+ * @details Permet à l'utilisateur de sélectionner un fichier.
+ * Calcule le hash SHA-256 du fichier entier.
+ * Affiche le résultat du hash à l'utilisateur.
+ */
 void MainWindow::calcFileSha()
 {
     QString fileToHash = QFileDialog::getOpenFileName(this, tr("Selectionnez le fichier à hasher"), "", tr("All Files (*)"));
@@ -249,7 +317,11 @@ void MainWindow::calcFileSha()
     }
 }
 
-
+/**
+ * @brief Génère une nouvelle clé AES
+ * @details Crée une nouvelle clé AES et l'enregistre dans le répertoire de base.
+ * Affiche un message de confirmation à l'utilisateur avec l'emplacement de la clé.
+ */
 void MainWindow::generateAES()
 {
     QString keyFile = baseDirectory + "/cles/cle_aes.key";
@@ -263,6 +335,12 @@ void MainWindow::generateAES()
     }
 }
 
+/**
+ * @brief Chiffre un fichier avec AES
+ * @details Permet à l'utilisateur de sélectionner un fichier à chiffrer.
+ * Utilise la clé AES stockée dans le répertoire de base pour le chiffrement.
+ * Enregistre le fichier chiffré dans le sous-répertoire 'chiffre'.
+ */
 void MainWindow::encryptAES()
 {
     QString keyFile = baseDirectory + "/cles/cle_aes.key";
@@ -284,6 +362,12 @@ void MainWindow::encryptAES()
     }
 }
 
+/**
+ * @brief Déchiffre un fichier avec AES
+ * @details Permet à l'utilisateur de sélectionner un fichier chiffré.
+ * Utilise la clé AES stockée dans le répertoire de base pour le déchiffrement.
+ * Enregistre le fichier déchiffré dans le sous-répertoire 'dechiffre'.
+ */
 void MainWindow::decryptAES()
 {
     QString keyFile = baseDirectory + "/cles/cle_aes.key";
