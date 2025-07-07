@@ -1,5 +1,5 @@
  # AppSécurité
-Bienvenue sur le Projet Température en C++ avec l'utilisation de la libraire Cryptopp
+Bienvenue sur le Projet appSecurite en C++ avec l'utilisation de la libraire Cryptopp
 
 ## Dépendances
 >[!WARNING]
